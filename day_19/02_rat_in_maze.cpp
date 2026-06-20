@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    // Function to check if the cell is within maze and valid to move
+    bool isSafe(int x, int y, int n, vector<vector<int>> &maze, 
+                vector<vector<int>> &visited) {
+        return (x >= 0 && x < n && y >= 0 && y < n && 
+                maze[x][y] == 1 && visited[x][y] == 0);
+    }
+
+    void solve(int x, int y, int n, vector<vector<int>> &maze, 
+               vector<vector<int>> &visited, string path, 
+               vector<string> &res) {
+
+        if (x == n - 1 && y == n - 1) {
+            res.push_back(path);
+            return;
+        }
+
+        visited[x][y] = 1;
+
+        // exploring downward path
+        if (isSafe(x + 1, y, n, maze, visited)) {
+            solve(x + 1, y, n, maze, visited, path + "D", res);
+        }
+        // exploring Left path
+        if (isSafe(x, y - 1, n, maze, visited)) {
+            solve(x, y - 1, n, maze, visited, path + "L", res);
+        }
+        // exploring Right path
+        if (isSafe(x, y + 1, n, maze, visited)) {
+            solve(x, y + 1, n, maze, visited, path + "R", res);
+        }
+        // exploring Upward path
+        if (isSafe(x - 1, y, n, maze, visited)) {
+            solve(x - 1, y, n, maze, visited, path + "U", res);
+        }
+
+        // Backtrack: unmark cell as visited
+        visited[x][y] = 0;
+    }
+
+    //find all paths
+    vector<string> findPath(vector<vector<int>> &maze, int n) {
+        vector<string> res;
+        vector<vector<int>> visited(n, vector<int>(n, 0));
+        if (maze[0][0] == 1) {
+            solve(0, 0, n, maze, visited, "", res);
+        }
+        return res;
+    }
+};
+
+int main() {
+    vector<vector<int>> maze = {
+        {1, 0, 0, 0},
+        {1, 1, 0, 1},
+        {1, 1, 0, 0},
+        {0, 1, 1, 1}
+    };
+    int n = maze.size();
+    Solution obj;
+    vector<string> paths = obj.findPath(maze, n);
+
+    for (auto &p : paths) cout << p << " ";
+}
